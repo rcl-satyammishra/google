@@ -1,10 +1,8 @@
 import re
 import string
-import nltk, spacy
+import nltk
 from sklearn.feature_extraction.text import CountVectorizer, TfidfVectorizer
 import numpy as np
-
-from sklearn.decomposition import LatentDirichletAllocation
 from sklearn.feature_extraction.text import CountVectorizer, TfidfVectorizer
 from pprint import pprint
 from textblob import TextBlob, Word
@@ -13,9 +11,6 @@ import pandas as pd
 from pattern.search import search
 from nltk.tokenize import word_tokenize
 import matplotlib.pyplot as plt
-
-# nlp = spacy.load("en_core_web_sm")
-
 vectorizer = CountVectorizer(analyzer='word',
                              min_df=3,  # minimum required occurences of a word
                              stop_words='english',  # remove stop words

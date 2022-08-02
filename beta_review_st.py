@@ -1,7 +1,5 @@
 import streamlit as st
-import nltk, spacy
-import pyLDAvis
-import pyLDAvis.sklearn
+import nltk
 import matplotlib.pyplot as plt
 import matplotlib as mpl
 from subprocess import check_output
@@ -19,7 +17,6 @@ service_provider = st.selectbox(
     ("Redcliffe Labs", "Healthians", "Lal PathLabs")
 )
 
-# nlp = spacy.load("en_core_web_sm")
 from st_utils import *
 
 
