@@ -94,7 +94,7 @@ if month_trend:
 
 
 def search_service_(text):
-    if search(title, text):
+    if re.search(title, text):
         return title
 
 
@@ -104,6 +104,7 @@ with st.form(key='search_form'):
     if submitted:
         st.write('Selected Review Values: ', title)
         redcliffe_labs_ = redcliffe_labs.copy()
+        title = title.lower()
         redcliffe_labs_['keyword'] = redcliffe_labs_.review_text.apply(search_service_)
         sdf_ = redcliffe_labs_[redcliffe_labs_['keyword'] == title]
         sdf_ = \

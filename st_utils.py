@@ -8,9 +8,10 @@ from pprint import pprint
 from textblob import TextBlob, Word
 
 import pandas as pd
-from pattern.search import search
+# from pattern.search import search
 from nltk.tokenize import word_tokenize
 import matplotlib.pyplot as plt
+
 vectorizer = CountVectorizer(analyzer='word',
                              min_df=3,  # minimum required occurences of a word
                              stop_words='english',  # remove stop words
@@ -80,18 +81,17 @@ def show_topics(vectorizer_, lda_model_, n_words=20):
 
 
 def search_service(text):
-    if search('service', text):
+    if re.search('service', text):
         return 'service'
-    elif search('report|Report|reports|result|Reports|results', text):
+    elif re.search('report', text) or re.search('reports', text) or re.search('Reports', text) or re.search('Results',
+                                                                                                            text):
         return 'report'
-    elif search('experience', text):
+    elif re.search('experience', text):
         return 'experience'
-    elif search('collection|sample|collected|blood|come|collect|came', text):
+    elif re.search('collection', text) or re.search('sample', text) or re.search('collected', text) or re.search(
+            'blood', text) or re.search('come', text) or re.search('collect', text) or re.search('came', text):
         return 'sample collection'
-    elif search('on time', text) or search('in time', text):
+    elif re.search('on time', text) or re.search('in time', text):
         return 'time'
     else:
         return 'other'
-
-
-
