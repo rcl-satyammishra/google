@@ -99,6 +99,8 @@ def search_service_(text):
 
 
 with st.form(key='search_form'):
+    st.info(
+        'Search Keyword to analyze trend over period of months.')
     title = st.text_input('Review Search', 'Report')
     submitted = st.form_submit_button("Submit")
     if submitted:
@@ -106,8 +108,8 @@ with st.form(key='search_form'):
         redcliffe_labs_ = redcliffe_labs.copy()
         title = title.lower()
         redcliffe_labs_['keyword'] = redcliffe_labs.review_text.apply(search_service_)
-        st.write(redcliffe_labs_[['review_datetime_utc', 'review_text', 'polarity', 'keyword', 'keywords']])
         sdf_ = redcliffe_labs_[redcliffe_labs_['keyword'] == title]
+        st.write(sdf_[['review_datetime_utc', 'review_text', 'polarity', 'keyword', 'keywords']])
         sdf_ = \
             redcliffe_labs_.groupby(
                 [redcliffe_labs_['review_datetime_utc'].dt.month_name(), redcliffe_labs_['keyword']],
