@@ -14,7 +14,9 @@ from streamlit import components
 st.set_page_config(layout="wide")
 service_provider = st.selectbox(
     "Select Diagnostic Service Provider",
-    ("Redcliffe Labs", "Healthians", "Lal PathLabs")
+    ("Redcliffe Labs", "Healthians"
+     # , "Lal PathLabs"
+     )
 )
 
 from st_utils import *
@@ -49,8 +51,12 @@ with st.expander("See Data"):
 
 
 def search_service_(text):
-    if re.search(title, text):
-        return title
+    count = 0
+    for i in title.split():
+        if re.search(i, text):
+            count += 1
+            if count == len(title.split()):
+                return title
 
 
 with st.form(key='search_form'):
@@ -81,7 +87,6 @@ with st.form(key='search_form'):
         fig = px.bar(sdf_, x='month', y='polarity_count', color='keyword')
         fig.update_layout(barmode='group')
         st.plotly_chart(fig, use_container_width=True)
-
 
 my_slider = st.checkbox('Select Reviews with Polarity Values', True)
 if my_slider:
