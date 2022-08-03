@@ -105,7 +105,8 @@ with st.form(key='search_form'):
         st.write('Selected Review Values: ', title)
         redcliffe_labs_ = redcliffe_labs.copy()
         title = title.lower()
-        redcliffe_labs_['keyword'] = redcliffe_labs_.review_text.apply(search_service_)
+        redcliffe_labs_['keyword'] = redcliffe_labs.review_text.apply(search_service_)
+        st.write(redcliffe_labs_[['review_datetime_utc', 'review_text', 'polarity', 'keyword', 'keywords']])
         sdf_ = redcliffe_labs_[redcliffe_labs_['keyword'] == title]
         sdf_ = \
             redcliffe_labs_.groupby(
@@ -113,8 +114,6 @@ with st.form(key='search_form'):
                 sort=False).agg(['count', 'mean'])[
                 ['polarity']].reset_index()
         sdf_.columns = ['month', 'keyword', 'polarity_count', 'polarity_mean']
-        if service_provider == "Redcliffe Labs":
-            sdf_ = sdf_[sdf_['polarity_count'] > 20]
         fig = px.line(sdf_, x="month", y="polarity_mean", color='keyword', markers=True)
         fig.update_layout(
             autosize=False,

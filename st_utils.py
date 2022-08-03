@@ -84,7 +84,8 @@ def search_service(text):
     if re.search('service', text):
         return 'service'
     elif re.search('report', text) or re.search('reports', text) or re.search('Reports', text) or re.search('Results',
-                                                                                                            text):
+                                                                                                            text) or re.search(
+            'Report', text) or re.search('result', text) or re.search('results', text):
         return 'report'
     elif re.search('experience', text):
         return 'experience'
