@@ -78,6 +78,8 @@ if service_provider != 'Comparison':
                     sort=False).agg(['count', 'mean'])[
                     ['polarity']].reset_index()
             sdf_.columns = ['month', 'keyword', 'polarity_count', 'polarity_mean']
+            sdf_ = sdf_[
+                sdf_.month.isin(['January', 'February', 'March', 'April', 'March', 'April', 'May', 'June', 'July'])]
             fig = px.line(sdf_, x="month", y="polarity_mean", color='keyword', markers=True)
             fig.update_layout(
                 autosize=False,
@@ -132,6 +134,8 @@ if service_provider != 'Comparison':
                                    sort=False).agg(['count', 'mean'])[
                 ['polarity']].reset_index()
         sdf_.columns = ['month', 'keyword', 'polarity_count', 'polarity_mean']
+        sdf_ = sdf_[
+            sdf_.month.isin(['January', 'February', 'March', 'April', 'March', 'April', 'May', 'June', 'July'])]
         if service_provider == "Redcliffe Labs":
             sdf_ = sdf_[sdf_['polarity_count'] > 20]
         fig = px.line(sdf_, x="month", y="polarity_mean", color='keyword', markers=True,
@@ -365,6 +369,8 @@ else:
                     sort=False).agg(['count', 'mean'])[
                     ['polarity']].reset_index()
             sdf_.columns = ['month', 'name', 'polarity_count', 'polarity_mean']
+            sdf_ = sdf_[
+                sdf_.month.isin(['January', 'February', 'March', 'April', 'March', 'April', 'May', 'June', 'July'])]
             fig = px.line(sdf_, x="month", y="polarity_mean", color='name', markers=True)
             fig.update_layout(
                 autosize=False,
