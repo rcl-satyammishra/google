@@ -47,51 +47,6 @@ st.title(service_provider + ' Google Reviews')
 with st.expander("See Data"):
     st.write(redcliffe_labs.head())
 
-my_slider = st.checkbox('Select Reviews with Polarity Values', True)
-if my_slider:
-    st.subheader('Select Reviews with Polarity Values')
-    with st.form(key='my_form'):
-        values = st.slider(
-            'Select a range of Review Polarity values',
-            -1.0, 1.0, (-1.0, -0.3))
-        submitted = st.form_submit_button("Submit")
-        if submitted:
-            st.write('Selected Polarity Values:', values)
-            st.write(redcliffe_labs[['polarity', 'review_text', 'review_rating']][
-                         redcliffe_labs['polarity'].between(values[0], values[1])])
-        else:
-            st.write(redcliffe_labs[['polarity', 'review_text', 'review_rating']][
-                         redcliffe_labs['polarity'].between(-1.0, 0.51)])
-
-c1, c2 = st.columns(2)
-rating_polarity = redcliffe_labs.groupby([redcliffe_labs['review_datetime_utc'].dt.month_name()],
-                                         sort=False).mean().reset_index()
-fig = px.line(rating_polarity, x="review_datetime_utc", y="review_rating")
-with c1:
-    st.plotly_chart(fig, use_container_width=True)
-    fig_2 = px.line(rating_polarity, x="review_datetime_utc", y="polarity")
-with c2:
-    st.plotly_chart(fig_2, use_container_width=True)
-
-month_trend = st.checkbox('Month wise Trend', True)
-if month_trend:
-    sdf_ = redcliffe_labs.groupby([redcliffe_labs['review_datetime_utc'].dt.month_name(), redcliffe_labs['keywords']],
-                                  sort=False).agg(['count', 'mean'])[
-        ['polarity']].reset_index()
-    sdf_.columns = ['month', 'keyword', 'polarity_count', 'polarity_mean']
-    if service_provider == "Redcliffe Labs":
-        sdf_ = sdf_[sdf_['polarity_count'] > 20]
-    fig = px.line(sdf_, x="month", y="polarity_mean", color='keyword', markers=True)
-    fig.update_layout(
-        autosize=False,
-        width=1200,
-        height=600, )
-    st.plotly_chart(fig, use_container_width=True)
-
-    fig = px.bar(sdf_, x='month', y='polarity_count', color='keyword')
-    fig.update_layout(barmode='group')
-    st.plotly_chart(fig, use_container_width=True)
-
 
 def search_service_(text):
     if re.search(title, text):
@@ -126,6 +81,72 @@ with st.form(key='search_form'):
         fig = px.bar(sdf_, x='month', y='polarity_count', color='keyword')
         fig.update_layout(barmode='group')
         st.plotly_chart(fig, use_container_width=True)
+
+
+my_slider = st.checkbox('Select Reviews with Polarity Values', True)
+if my_slider:
+    st.subheader('Select Reviews with Polarity Values')
+    with st.form(key='my_form'):
+        values = st.slider(
+            'Select a range of Review Polarity values',
+            -1.0, 1.0, (-1.0, -0.3))
+        submitted = st.form_submit_button("Submit")
+        if submitted:
+            st.write('Selected Polarity Values:', values)
+            st.write(redcliffe_labs[['polarity', 'review_text', 'review_rating']][
+                         redcliffe_labs['polarity'].between(values[0], values[1])])
+        # else:
+        #     st.write(redcliffe_labs[['polarity', 'review_text', 'review_rating']][
+        #                  redcliffe_labs['polarity'].between(-1.0, 0.51)])
+
+c1, c2 = st.columns(2)
+rating_polarity = redcliffe_labs.groupby([redcliffe_labs['review_datetime_utc'].dt.month_name()],
+                                         sort=False).mean().reset_index()
+fig = px.line(rating_polarity, x="review_datetime_utc", y="review_rating",
+              labels={
+                  "review_datetime_utc": "Month",
+                  "review_rating": "Average Rating"
+              }
+              )
+with c1:
+    st.plotly_chart(fig, use_container_width=True)
+    fig_2 = px.line(rating_polarity, x="review_datetime_utc", y="polarity",
+                    labels={
+                        "review_datetime_utc": "Month",
+                        "polarity": "Average Polarity"
+                    }
+                    )
+with c2:
+    st.plotly_chart(fig_2, use_container_width=True)
+
+month_trend = st.checkbox('Month wise Trend', True)
+if month_trend:
+    sdf_ = redcliffe_labs.groupby([redcliffe_labs['review_datetime_utc'].dt.month_name(), redcliffe_labs['keywords']],
+                                  sort=False).agg(['count', 'mean'])[
+        ['polarity']].reset_index()
+    sdf_.columns = ['month', 'keyword', 'polarity_count', 'polarity_mean']
+    if service_provider == "Redcliffe Labs":
+        sdf_ = sdf_[sdf_['polarity_count'] > 20]
+    fig = px.line(sdf_, x="month", y="polarity_mean", color='keyword', markers=True,
+                  labels={
+                      "month": "Month",
+                      "polarity_mean": "Average Polarity"
+                  }
+                  )
+    fig.update_layout(
+        autosize=False,
+        width=1200,
+        height=600, )
+    st.plotly_chart(fig, use_container_width=True)
+
+    fig = px.bar(sdf_, x='month', y='polarity_count', color='keyword',
+                 labels={
+                     "month": "Month",
+                     "polarity_count": "Count"
+                 }
+                 )
+    fig.update_layout(barmode='group')
+    st.plotly_chart(fig, use_container_width=True)
 
 v_polarity = st.checkbox('Show Review Polarity/Rating Plots ', True)
 st.subheader('Polarity Values Plots ')
