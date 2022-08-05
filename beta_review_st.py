@@ -13,9 +13,9 @@ from streamlit import components
 
 st.set_page_config(layout="wide")
 service_provider = st.selectbox(
-    "Select Diagnostic Service Provider",
-    ("Redcliffe Labs", "Healthians",
-     "Comparison"
+    "Select Diagnostic Service Provider Redcliffe or Comparison",
+    ("Comparison", "Redcliffe Labs", "Healthians"
+
      # , "Lal PathLabs"
      )
 )
@@ -328,7 +328,6 @@ if service_provider != 'Comparison':
     st.info('Please reload/reboot if problem occurs due to loading!')
 
 else:
-    st.write('Comparison')
     redcliffe_labs = pd.read_excel('redcliffelabs15k.xlsx', parse_dates=['review_datetime_utc'])
     healthians_labs = pd.read_csv('healthians_1k_recent_new.csv', parse_dates=['review_datetime_utc'])
     df = pd.concat([redcliffe_labs, healthians_labs])
@@ -354,7 +353,7 @@ else:
     with st.form(key='search_form'):
         st.info(
             'Search Keyword to analyze trend over period of months.')
-        title = st.text_input('Keyword Search and Analyze', 'Report experience')
+        title = st.text_input('Keyword Search and Analyze', 'customer care')
         submitted = st.form_submit_button("Submit")
         if submitted:
             st.write('Selected Review Values: ', title)
