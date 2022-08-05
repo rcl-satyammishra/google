@@ -364,8 +364,8 @@ else:
             sdf_ = df_[df_['keyword'] == title]
             st.write(sdf_[['name', 'review_datetime_utc', 'review_text', 'polarity', 'keyword', 'keywords']])
             sdf_ = \
-                df_.groupby(
-                    [df_['review_datetime_utc'].dt.month_name(), df_['name']],
+                sdf_.groupby(
+                    [sdf_['review_datetime_utc'].dt.month_name(), sdf_['name']],
                     sort=False).agg(['count', 'mean'])[
                     ['polarity']].reset_index()
             sdf_.columns = ['month', 'name', 'polarity_count', 'polarity_mean']
