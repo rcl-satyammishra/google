@@ -47,8 +47,16 @@ redcliffe_labs = read_data()
 if service_provider != 'Comparison':
     st.title(service_provider + ' Google Reviews')
 
-    with st.expander("See Data"):
+    with st.expander("See/Download Data"):
         st.write(redcliffe_labs.head())
+        csv = convert_df(redcliffe_labs)
+        st.download_button(
+            "Press to Download Complete Data",
+            csv,
+            "file.csv",
+            "text/csv",
+            key='download-csv'
+        )
 
 
     def search_service_(text):
@@ -328,17 +336,23 @@ if service_provider != 'Comparison':
     st.info('Please reload/reboot if problem occurs due to loading!')
 
 else:
-    redcliffe_labs = pd.read_excel('redcliffelabs15k.xlsx', parse_dates=['review_datetime_utc'])
-    healthians_labs = pd.read_csv('healthians_1k_recent_new.csv', parse_dates=['review_datetime_utc'])
-    df = pd.concat([redcliffe_labs, healthians_labs])
-    df = df.dropna()
-    df = df[['name', 'review_text', 'review_rating', 'review_datetime_utc']]
-    df['review_text'] = pd.DataFrame(df.review_text.apply(lambda x: clean_text(x)))
-    # df["review_text"] = df.apply(lambda x: lemmatizer(x['review_text']), axis=1)
-    df['review_lemmatize_clean'] = df['review_text'].str.replace('-PRON-', '')
-    df['polarity'] = df.review_lemmatize_clean.apply(detect_polarity)
-    df = df.sort_values(by='review_datetime_utc')
-    df['keywords'] = df.review_text.apply(search_service)
+    @st.cache(hash_funcs={"MyUnhashableClass": lambda _: None}, allow_output_mutation=True)
+    def load_data():
+        redcliffe_labs = pd.read_excel('redcliffelabs15k.xlsx', parse_dates=['review_datetime_utc'])
+        healthians_labs = pd.read_csv('healthians_1k_recent_new.csv', parse_dates=['review_datetime_utc'])
+        df = pd.concat([redcliffe_labs, healthians_labs])
+        df = df.dropna()
+        df = df[['name', 'review_text', 'review_rating', 'review_datetime_utc']]
+        df['review_text'] = pd.DataFrame(df.review_text.apply(lambda x: clean_text(x)))
+        # df["review_text"] = df.apply(lambda x: lemmatizer(x['review_text']), axis=1)
+        df['review_lemmatize_clean'] = df['review_text'].str.replace('-PRON-', '')
+        df['polarity'] = df.review_lemmatize_clean.apply(detect_polarity)
+        df = df.sort_values(by='review_datetime_utc')
+        df['keywords'] = df.review_text.apply(search_service)
+        return df
+
+
+    df = load_data()
 
 
     def search_service_(text):
@@ -396,5 +410,3 @@ else:
     fig = px.bar(sdf_, x='month', y='polarity_count', color='name')
     fig.update_layout(barmode='group')
     st.plotly_chart(fig, use_container_width=True)
-
-
