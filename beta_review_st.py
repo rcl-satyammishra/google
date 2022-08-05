@@ -350,33 +350,43 @@ else:
                     return title
 
 
-    with st.form(key='search_form'):
-        st.info(
-            'Search Keyword to analyze trend over period of months.')
-        title = st.text_input('Keyword Search and Analyze', 'customer care')
-        submitted = st.form_submit_button("Submit")
-        if submitted:
-            st.write('Selected Review Values: ', title)
-            df_ = df.copy()
-            title = title.lower()
-            df_['keyword'] = df.review_text.apply(search_service_)
-            sdf_ = df_[df_['keyword'] == title]
-            st.write(sdf_[['name', 'review_datetime_utc', 'review_text', 'polarity', 'keyword', 'keywords']])
-            sdf_ = \
-                sdf_.groupby(
-                    [sdf_['review_datetime_utc'].dt.month_name(), sdf_['name']],
-                    sort=False).agg(['count', 'mean'])[
-                    ['polarity']].reset_index()
-            sdf_.columns = ['month', 'name', 'polarity_count', 'polarity_mean']
-            sdf_ = sdf_[
-                sdf_.month.isin(['January', 'February', 'March', 'April', 'March', 'April', 'May', 'June', 'July'])]
-            fig = px.line(sdf_, x="month", y="polarity_mean", color='name', markers=True)
-            fig.update_layout(
-                autosize=False,
-                width=1200,
-                height=600, )
-            st.plotly_chart(fig, use_container_width=True)
+    # with st.form(key='search_form'):
+    st.info(
+        'Search Keyword to analyze trend over period of months.')
+    title = st.text_input('Keyword Search and Analyze', 'customer care')
+    # submitted = st.form_submit_button("Submit")
+    # if submitted:
+    st.write('Selected Review Values: ', title)
+    df_ = df.copy()
+    title = title.lower()
+    df_['keyword'] = df.review_text.apply(search_service_)
+    sdf_ = df_[df_['keyword'] == title]
+    st.write(sdf_[['name', 'review_datetime_utc', 'review_text', 'polarity', 'keyword', 'keywords']].head(5))
+    sdf_ = \
+        sdf_.groupby(
+            [sdf_['review_datetime_utc'].dt.month_name(), sdf_['name']],
+            sort=False).agg(['count', 'mean'])[
+            ['polarity']].reset_index()
+    sdf_.columns = ['month', 'name', 'polarity_count', 'polarity_mean']
+    sdf_ = sdf_[
+        sdf_.month.isin(['January', 'February', 'March', 'April', 'March', 'April', 'May', 'June', 'July'])]
+    csv = convert_df(sdf_)
+    st.download_button(
+        "Press to Download Data",
+        csv,
+        "file.csv",
+        "text/csv",
+        key='download-csv'
+    )
+    fig = px.line(sdf_, x="month", y="polarity_mean", color='name', markers=True)
+    fig.update_layout(
+        autosize=False,
+        width=1200,
+        height=600, )
+    st.plotly_chart(fig, use_container_width=True)
 
-            fig = px.bar(sdf_, x='month', y='polarity_count', color='name')
-            fig.update_layout(barmode='group')
-            st.plotly_chart(fig, use_container_width=True)
+    fig = px.bar(sdf_, x='month', y='polarity_count', color='name')
+    fig.update_layout(barmode='group')
+    st.plotly_chart(fig, use_container_width=True)
+
+

@@ -6,7 +6,7 @@ import numpy as np
 from sklearn.feature_extraction.text import CountVectorizer, TfidfVectorizer
 from pprint import pprint
 from textblob import TextBlob, Word
-
+import streamlit as st
 import pandas as pd
 # from pattern.search import search
 from nltk.tokenize import word_tokenize
@@ -24,6 +24,11 @@ vectorizer = CountVectorizer(analyzer='word',
 
 def detect_polarity(text):
     return TextBlob(text).sentiment.polarity
+
+
+@st.cache
+def convert_df(my_df):
+    return my_df.to_csv().encode('utf-8')
 
 
 def clean_text(text):
