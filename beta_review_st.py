@@ -369,16 +369,79 @@ else:
         return info
 
 
+    def search_service_regex(text):
+        count = 0
+        info = []
+        for title_ in titles:
+            for j in title_.split():
+                if re.search(j, text):
+                    count += 1
+                    info.append(title_)
+                    if count == len(titles):
+                        return info
+
+
     # with st.form(key='search_form'):
     st.info(
         'Search Keyword to analyze trend over period of months.')
     no = int(st.number_input('No. of keywords:', 2))
-    keywords = ['customer care', 'report experience', 'sample collection', 'bad experience']
+    keywords = ['customer care', 'worst poor']
     titles = []
     for i in range(no):
         title = st.text_input('', keywords[i], key=str(i))
         titles.append(title)
-    agree = st.checkbox("contains all set of words in a keywords. i.e. customer & care", value = True)
+    df_ = df.copy()
+    titles = [title.lower() for title in titles]
+    st.info('Results for: '+'| and |'.join([' or '.join(title.split()) for title in titles]))
+    df_['keyword'] = df.review_text.apply(search_service_regex)
+    df_ = df_.explode('keyword')
+    sdf_ = df_.copy()
+    sdf_ = sdf_[sdf_['keyword'].isin(titles)]
+    with st.expander("See/Download Redcliffe Labs Data"):
+        st.write(sdf_[['name', 'review_datetime_utc', 'review_text', 'polarity', 'keyword']])
+        csv = convert_df(sdf_[['name', 'review_datetime_utc', 'review_text', 'polarity', 'keyword']])
+        sdf_ = \
+            sdf_.groupby(
+                [sdf_['review_datetime_utc'].dt.month_name(), sdf_['name']],
+                sort=False).agg(['count', 'mean'])[
+                ['polarity']].reset_index()
+        sdf_.columns = ['month', 'name', 'polarity_count', 'polarity_mean']
+        sdf_ = sdf_[
+            sdf_.month.isin(['January', 'February', 'March', 'April', 'March', 'April', 'May', 'June', 'July'])]
+        st.download_button(
+            "Press to Download Data",
+            csv,
+            "file.csv",
+            "text/csv",
+            key='download-csv-1'
+        )
+    fig = px.line(sdf_, x="month", y="polarity_mean", color='name', markers=True)
+    fig.update_layout(
+        autosize=False,
+        yaxis_range=[-1, 1]
+        # width=1200,
+        # height=600,
+    )
+    st.plotly_chart(fig, use_container_width=True)
+    csv = convert_df(sdf_)
+    st.download_button(
+        "Press to Download Data",
+        csv,
+        "file.csv",
+        "text/csv",
+        key='download-csv-2'
+    )
+
+    fig = px.bar(sdf_, x='month', y='polarity_count', color='name')
+    fig.update_layout(barmode='group')
+    st.plotly_chart(fig, use_container_width=True)
+    no = int(st.number_input('No. of keywords:', 2, key='l'))
+    keywords = ['customer care', 'report experience', 'sample collection', 'bad experience']
+    titles = []
+    for i in range(no):
+        title = st.text_input('', keywords[i], key=str(i + 10))
+        titles.append(title)
+    agree = st.checkbox("contains all set of words in a keywords. i.e. customer & care", value=True, key='sd')
     df_ = df.copy()
     titles = [title.lower() for title in titles]
     df_['keyword'] = df.review_text.apply(search_service_)
@@ -397,7 +460,7 @@ else:
                     [sdf_['review_datetime_utc'].dt.month_name(), sdf_['keyword']],
                     sort=False).agg(['count', 'mean'])[
                     ['polarity']].reset_index()
-            sdf_.columns = ['month', 'name', 'polarity_count', 'polarity_mean']
+            sdf_.columns = ['month', 'keyword', 'polarity_count', 'polarity_mean']
             sdf_ = sdf_[
                 sdf_.month.isin(['January', 'February', 'March', 'April', 'March', 'April', 'May', 'June', 'July'])]
             st.download_button(
@@ -405,9 +468,9 @@ else:
                 csv,
                 "file.csv",
                 "text/csv",
-                key='download-csv-1'
+                key='download-csv-12'
             )
-        fig = px.line(sdf_, x="month", y="polarity_mean", color='name', markers=True)
+        fig = px.line(sdf_, x="month", y="polarity_mean", color='keyword', markers=True)
         fig.update_layout(
             autosize=False,
             yaxis_range=[-1, 1]
@@ -421,10 +484,10 @@ else:
             csv,
             "file.csv",
             "text/csv",
-            key='download-csv-2'
+            key='download-csv-21'
         )
 
-        fig = px.bar(sdf_, x='month', y='polarity_count', color='name')
+        fig = px.bar(sdf_, x='month', y='polarity_count', color='keyword')
         fig.update_layout(barmode='group')
         st.plotly_chart(fig, use_container_width=True)
 
@@ -440,7 +503,7 @@ else:
                     [sdf_['review_datetime_utc'].dt.month_name(), sdf_['keyword']],
                     sort=False).agg(['count', 'mean'])[
                     ['polarity']].reset_index()
-            sdf_.columns = ['month', 'name', 'polarity_count', 'polarity_mean']
+            sdf_.columns = ['month', 'keyword', 'polarity_count', 'polarity_mean']
             sdf_ = sdf_[
                 sdf_.month.isin(['January', 'February', 'March', 'April', 'March', 'April', 'May', 'June', 'July'])]
             st.download_button(
@@ -448,9 +511,9 @@ else:
                 csv,
                 "file.csv",
                 "text/csv",
-                key='download-csv-3'
+                key='download-csv-31'
             )
-        fig = px.line(sdf_, x="month", y="polarity_mean", color='name', markers=True)
+        fig = px.line(sdf_, x="month", y="polarity_mean", color='keyword', markers=True)
         fig.update_layout(
             autosize=False,
             yaxis_range=[-1, 1]
@@ -464,9 +527,9 @@ else:
             csv,
             "file.csv",
             "text/csv",
-            key='download-csv-4'
+            key='download-csv-41'
         )
 
-        fig = px.bar(sdf_, x='month', y='polarity_count', color='name')
+        fig = px.bar(sdf_, x='month', y='polarity_count', color='keyword')
         fig.update_layout(barmode='group')
         st.plotly_chart(fig, use_container_width=True)
