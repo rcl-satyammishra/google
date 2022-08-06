@@ -385,6 +385,7 @@ else:
     df_ = df_.explode('keyword')
     a, b = st.columns(2)
     with a:
+        st.subheader('Redcliffe Labs')
         sdf_ = df_.copy()
         sdf_ = sdf_[sdf_.name == 'Redcliffe Labs']
         sdf_ = sdf_[sdf_['keyword'].isin(titles)]
@@ -428,6 +429,7 @@ else:
         st.plotly_chart(fig, use_container_width=True)
 
     with b:
+        st.subheader('Healthians')
         df_ = df_[df_.name != 'Redcliffe Labs']
         sdf_ = df_[df_['keyword'].isin(titles)]
         with st.expander("See/Download Healthians Data"):
