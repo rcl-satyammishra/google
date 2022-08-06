@@ -385,14 +385,14 @@ else:
     st.info(
         'Search Keyword to analyze trend over period of months.')
     no = int(st.number_input('No. of keywords:', 2))
-    keywords = ['customer care', 'worst poor']
+    keywords = ['customer care', 'worst poor', 'family', 'reply']
     titles = []
     for i in range(no):
         title = st.text_input('', keywords[i], key=str(i))
         titles.append(title)
     df_ = df.copy()
     titles = [title.lower() for title in titles]
-    st.info('Results for: '+'| and |'.join([' or '.join(title.split()) for title in titles]))
+    st.info('Results for: ' + '| and |'.join([' or '.join(title.split()) for title in titles]))
     df_['keyword'] = df.review_text.apply(search_service_regex)
     df_ = df_.explode('keyword')
     sdf_ = df_.copy()
