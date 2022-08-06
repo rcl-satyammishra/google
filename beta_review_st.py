@@ -388,23 +388,24 @@ else:
         sdf_ = df_.copy()
         sdf_ = sdf_[sdf_.name == 'Redcliffe Labs']
         sdf_ = sdf_[sdf_['keyword'].isin(titles)]
-        st.write(sdf_[['name', 'review_datetime_utc', 'review_text', 'polarity', 'keyword']])
-        csv = convert_df(sdf_[['name', 'review_datetime_utc', 'review_text', 'polarity', 'keyword']])
-        sdf_ = \
-            sdf_.groupby(
-                [sdf_['review_datetime_utc'].dt.month_name(), sdf_['keyword']],
-                sort=False).agg(['count', 'mean'])[
-                ['polarity']].reset_index()
-        sdf_.columns = ['month', 'name', 'polarity_count', 'polarity_mean']
-        sdf_ = sdf_[
-            sdf_.month.isin(['January', 'February', 'March', 'April', 'March', 'April', 'May', 'June', 'July'])]
-        st.download_button(
-            "Press to Download Data",
-            csv,
-            "file.csv",
-            "text/csv",
-            key='download-csv-1'
-        )
+        with st.expander("See/Download Redcliffe Labs Data"):
+            st.write(sdf_[['name', 'review_datetime_utc', 'review_text', 'polarity', 'keyword']])
+            csv = convert_df(sdf_[['name', 'review_datetime_utc', 'review_text', 'polarity', 'keyword']])
+            sdf_ = \
+                sdf_.groupby(
+                    [sdf_['review_datetime_utc'].dt.month_name(), sdf_['keyword']],
+                    sort=False).agg(['count', 'mean'])[
+                    ['polarity']].reset_index()
+            sdf_.columns = ['month', 'name', 'polarity_count', 'polarity_mean']
+            sdf_ = sdf_[
+                sdf_.month.isin(['January', 'February', 'March', 'April', 'March', 'April', 'May', 'June', 'July'])]
+            st.download_button(
+                "Press to Download Data",
+                csv,
+                "file.csv",
+                "text/csv",
+                key='download-csv-1'
+            )
         fig = px.line(sdf_, x="month", y="polarity_mean", color='name', markers=True)
         fig.update_layout(
             autosize=False,
@@ -429,23 +430,24 @@ else:
     with b:
         df_ = df_[df_.name != 'Redcliffe Labs']
         sdf_ = df_[df_['keyword'].isin(titles)]
-        st.write(sdf_[['name', 'review_datetime_utc', 'review_text', 'polarity', 'keyword']])
-        csv = convert_df(sdf_[['name', 'review_datetime_utc', 'review_text', 'polarity', 'keyword']])
-        sdf_ = \
-            sdf_.groupby(
-                [sdf_['review_datetime_utc'].dt.month_name(), sdf_['keyword']],
-                sort=False).agg(['count', 'mean'])[
-                ['polarity']].reset_index()
-        sdf_.columns = ['month', 'name', 'polarity_count', 'polarity_mean']
-        sdf_ = sdf_[
-            sdf_.month.isin(['January', 'February', 'March', 'April', 'March', 'April', 'May', 'June', 'July'])]
-        st.download_button(
-            "Press to Download Data",
-            csv,
-            "file.csv",
-            "text/csv",
-            key='download-csv-3'
-        )
+        with st.expander("See/Download Healthians Data"):
+            st.write(sdf_[['name', 'review_datetime_utc', 'review_text', 'polarity', 'keyword']])
+            csv = convert_df(sdf_[['name', 'review_datetime_utc', 'review_text', 'polarity', 'keyword']])
+            sdf_ = \
+                sdf_.groupby(
+                    [sdf_['review_datetime_utc'].dt.month_name(), sdf_['keyword']],
+                    sort=False).agg(['count', 'mean'])[
+                    ['polarity']].reset_index()
+            sdf_.columns = ['month', 'name', 'polarity_count', 'polarity_mean']
+            sdf_ = sdf_[
+                sdf_.month.isin(['January', 'February', 'March', 'April', 'March', 'April', 'May', 'June', 'July'])]
+            st.download_button(
+                "Press to Download Data",
+                csv,
+                "file.csv",
+                "text/csv",
+                key='download-csv-3'
+            )
         fig = px.line(sdf_, x="month", y="polarity_mean", color='name', markers=True)
         fig.update_layout(
             autosize=False,
