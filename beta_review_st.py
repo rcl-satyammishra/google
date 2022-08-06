@@ -378,7 +378,7 @@ else:
     for i in range(no):
         title = st.text_input('', keywords[i], key=str(i))
         titles.append(title)
-    agree = st.checkbox('contains all set of words in a keywords. i.e. customer & care')
+    agree = st.checkbox("contains all set of words in a keywords. i.e. customer & care", value = True)
     df_ = df.copy()
     titles = [title.lower() for title in titles]
     df_['keyword'] = df.review_text.apply(search_service_)
